@@ -1,4 +1,4 @@
-FROM rust:latest
+FROM --platform=arm64 rust:latest
 
 COPY . /usr/src/app
 

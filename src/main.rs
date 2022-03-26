@@ -1,5 +1,3 @@
-#![feature(rustc_private)]
-
 use anyhow::Context as _;
 use rocket::{response::status::NotFound, routes, serde::json::Json};
 use serde::Serialize;

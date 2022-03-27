@@ -1,5 +1,5 @@
 use anyhow::Context as _;
-use rocket::{response::status::NotFound, routes, serde::json::Json};
+use rocket::{config::Config, response::status::NotFound, routes, serde::json::Json};
 use serde::Serialize;
 use std::{
     fs::File,
@@ -84,7 +84,21 @@ fn get_entries() -> Json<Entries> {
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
-    let rocket = rocket::build()
+    let config = {
+        if cfg!(debug_assertions) {
+            Config {
+                ..Config::default()
+            }
+        } else {
+            Config {
+                address: std::net::IpAddr::V4("0.0.0.0".parse().unwrap()),
+                port: 49152,
+                ..Config::default()
+            }
+        }
+    };
+
+    let rocket = rocket::custom(config)
         .mount("/", routes![get_entries, add_data])
         .ignite()
         .await?;
